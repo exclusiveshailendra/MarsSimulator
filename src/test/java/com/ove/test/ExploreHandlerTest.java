@@ -36,7 +36,8 @@ public class ExploreHandlerTest {
 	@Test
 	public void testShortestPath_ForNoExplorer() {
 		
-		String[][] array = { { "*", "*", "b", "b", "*" },
+		String[][] array = { 
+				 { "*", "*", "b", "b", "*" },
 
 				 { "*", "*", "*", "b", "*" },
 

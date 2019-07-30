@@ -15,20 +15,27 @@ import com.ove.commandhandler.BlockHandler;
 import com.ove.commandhandler.ExplorerHandler;
 import com.ove.commandhandler.PlaceHandler;
 import com.ove.commandhandler.ReportHandler;
-import com.ove.simulator.Canvas;
 
 /**
  * A Main Class for Mars Simulator
+ *
  */
 public class MainSimulator {
 
 	private static final Logger LOG = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
+	/**
+	 * Main method for initiate execution.
+	 * 
+	 * @param args
+	 * @throws IOException
+	 * @throws IllegalAccessException
+	 */
 	public static void main(String[] args) throws IOException, IllegalAccessException {
 		LOG.log(Level.INFO, "Mars Simulator Start");
 		String fileName = null;
 		MainSimulator sim = new MainSimulator();
-		
+
 		for (String arg : args) {
 			if (fileName == null)
 				fileName = arg;
@@ -45,36 +52,36 @@ public class MainSimulator {
 			commandList = sim.commandMapper(contents);
 		} catch (Exception e) {
 			LOG.log(Level.SEVERE,
-					"The command specified is invalid. Your command must be one of PLACE,BLOCK,EXPLORE or REPORT", e);
+					"The command specified is invalid. Your command must be one of PLACE,BLOCK,EXPLORE or REPORT");
+			return;
 		}
 
 		Canvas canvas = new Canvas();
-		MainSimulator mainSimulator = new MainSimulator();
 		InputManager inputManager = new InputManager(commandList);
 		inputManager.populateList();
 
 		try {
-			mainSimulator.validateQueueSize(inputManager);
+			sim.validateQueueSize(inputManager);
 
 		} catch (Exception e) {
 			LOG.log(Level.SEVERE,
 					"Execution failed: Queue size validation failed due to empty command list. Please provide valid commands: PLACE, BLOCK, EXPLORER, REPORT.",
 					e);
-			throw e;
+			return;
 		}
 
 		try {
 			inputManager.checkQueueHeadForPlace();
 		} catch (Exception e) {
-			LOG.log(Level.SEVERE, "Execution failed: PLACE should be the first command!", e);
-			throw e;
+			LOG.log(Level.SEVERE, "Execution failed: PLACE should be the first command!");
+			return;
 		}
 
 		try {
-			mainSimulator.runSimulator(inputManager, canvas);
+			sim.runSimulator(inputManager, canvas);
 		} catch (Exception e) {
-			LOG.log(Level.SEVERE, "Execution failed: unable to execute simulator.", e);
-			throw e;
+			LOG.log(Level.SEVERE, "Execution failed: unable to execute simulator.");
+			return;
 		}
 	}
 
@@ -86,7 +93,6 @@ public class MainSimulator {
 	 *            canvas
 	 *
 	 */
-
 	public void runSimulator(InputManager inputManager, Canvas canvas) {
 		Queue<InputCommands> queue = getQueue(inputManager);
 		LOG.log(Level.INFO, "Queue is initialized and head of the queue is PLACE");
@@ -116,7 +122,7 @@ public class MainSimulator {
 					reportHandler.start();
 				}
 			} else {
-				LOG.log(Level.INFO, "Invalid Coordinates");
+				LOG.log(Level.SEVERE, "Invalid Coordinates");
 			}
 		}
 	}
@@ -200,12 +206,9 @@ public class MainSimulator {
 				} else if (line.startsWith("REPORT")) {
 					commands.add(new InputCommands(line));
 				} else {
-					/*
-					 * throw new IllegalAccessException(
-					 * "The command specified is invalid. Your command must be one of PLACE,BLOCK,EXPLORE or REPORT"
-					 * );
-					 */
 					LOG.log(Level.WARNING, "Please provide place command to run the program");
+					throw new IllegalAccessException(
+							"The command specified is invalid. Your command must be one of PLACE,BLOCK,EXPLORE or REPORT");
 				}
 			}
 		}

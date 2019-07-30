@@ -7,7 +7,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
-
+/**
+ * 
+ * InputManager class to hold command list.
+ *
+ */
 public class InputManager {
 
 	private static final Logger LOG = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);

@@ -19,8 +19,6 @@ public class MainSimulatorTest {
 	public void testValidateQueueSize_ForNullValueOfInputs() {
 		InputManager manager = new InputManager(null);
 		MainSimulator simulator = new MainSimulator();
-		
-		
 		simulator.validateQueueSize(manager);
 		
 	}
@@ -33,11 +31,7 @@ public class MainSimulatorTest {
 		InputManager manager = new InputManager(commandList);
 		manager.populateList();
 		
-		
-		
-		boolean result = sim.validateQueueSize(manager);
-		
-		assertTrue(result);
+		assertTrue(sim.validateQueueSize(manager));
 		
 	}
 
@@ -59,8 +53,17 @@ public class MainSimulatorTest {
 		contents.add("RAGE 1,1");
 		contents.add("PLACE 1,1");
 		sim.commandMapper(contents);
-		
-		
+	}
+	
+	@Test(expected = IllegalAccessException.class)
+	public void testCommandMapper_ForOutOfBoundInputs() throws IllegalAccessException {
+		MainSimulator sim = new MainSimulator();
+		List<String> contents = new ArrayList<String>();
+		contents.add("PLACE 1,1");
+		contents.add("BLOCK 5,1");
+		contents.add("RAGE 1,1");
+		contents.add("PLACE 1,1");
+		sim.commandMapper(contents);
 	}
 	
 	@Test
@@ -73,7 +76,20 @@ public class MainSimulatorTest {
 		contents.add("PLACE 2,2");
 		
 		assertEquals(4, sim.commandMapper(contents).size());
-		
-		
 	}
+	
+	@Test(expected = IllegalAccessException.class)
+	public void testCommandMapper_ForInvalidCommand() throws IllegalAccessException {
+		MainSimulator sim = new MainSimulator();
+		List<String> contents = new ArrayList<String>();
+		//Added invalid command
+		contents.add("BLOCK 1,1");
+		contents.add("BLOCK 1,1");
+		contents.add("BLOCK 2,1");
+		contents.add("INPLACE 2,2");
+		contents.add("BLOCK 2,1");
+		contents.add("BLOCK 1,2");
+		sim.commandMapper(contents);
+	}
+	
 }
