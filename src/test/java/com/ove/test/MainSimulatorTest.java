@@ -44,7 +44,7 @@ public class MainSimulatorTest {
 		assertEquals(0, commandList.size());
 	}
 	
-	@Test(expected = IllegalAccessException.class)
+	@Test
 	public void testCommandMapper_ForWrongInputs() throws IllegalAccessException {
 		MainSimulator sim = new MainSimulator();
 		List<String> contents = new ArrayList<String>();
@@ -53,17 +53,8 @@ public class MainSimulatorTest {
 		contents.add("RAGE 1,1");
 		contents.add("PLACE 1,1");
 		sim.commandMapper(contents);
-	}
-	
-	@Test(expected = IllegalAccessException.class)
-	public void testCommandMapper_ForOutOfBoundInputs() throws IllegalAccessException {
-		MainSimulator sim = new MainSimulator();
-		List<String> contents = new ArrayList<String>();
-		contents.add("PLACE 1,1");
-		contents.add("BLOCK 5,1");
-		contents.add("RAGE 1,1");
-		contents.add("PLACE 1,1");
-		sim.commandMapper(contents);
+		
+		assertEquals(3, sim.commandMapper(contents).size());
 	}
 	
 	@Test
@@ -78,7 +69,7 @@ public class MainSimulatorTest {
 		assertEquals(4, sim.commandMapper(contents).size());
 	}
 	
-	@Test(expected = IllegalAccessException.class)
+	@Test
 	public void testCommandMapper_ForInvalidCommand() throws IllegalAccessException {
 		MainSimulator sim = new MainSimulator();
 		List<String> contents = new ArrayList<String>();
@@ -89,7 +80,7 @@ public class MainSimulatorTest {
 		contents.add("INPLACE 2,2");
 		contents.add("BLOCK 2,1");
 		contents.add("BLOCK 1,2");
-		sim.commandMapper(contents);
+		assertEquals(6, sim.commandMapper(contents).size());
 	}
 	
 }

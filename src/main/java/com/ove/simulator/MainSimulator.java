@@ -70,12 +70,9 @@ public class MainSimulator {
 			return;
 		}
 
-		try {
-			inputManager.checkQueueHeadForPlace();
-		} catch (Exception e) {
-			LOG.log(Level.SEVERE, "Execution failed: PLACE should be the first command!");
-			return;
-		}
+		// this validation is not handled while create command queue so no
+		// further check needed.
+		// inputManager.checkQueueHeadForPlace();
 
 		try {
 			sim.runSimulator(inputManager, canvas);
@@ -194,10 +191,13 @@ public class MainSimulator {
 	 */
 	public List<InputCommands> commandMapper(List<String> contents) throws IllegalAccessException {
 		List<InputCommands> commands = new ArrayList<InputCommands>();
+		boolean isPlaceCmdAvailable = Boolean.FALSE;
 		if (!contents.isEmpty()) {
 			for (String line : contents) {
 				line = line.trim();
 				if (line.startsWith("PLACE") || line.startsWith("BLOCK") || line.startsWith("EXPLORE")) {
+
+					isPlaceCmdAvailable = line.startsWith("PLACE");
 					String[] rowCols = line.split("\\s++");
 					String commandName = rowCols[0];
 					String[] points = rowCols[1].split(",");
@@ -206,10 +206,19 @@ public class MainSimulator {
 				} else if (line.startsWith("REPORT")) {
 					commands.add(new InputCommands(line));
 				} else {
-					LOG.log(Level.WARNING, "Please provide place command to run the program");
-					throw new IllegalAccessException(
-							"The command specified is invalid. Your command must be one of PLACE,BLOCK,EXPLORE or REPORT");
+					LOG.log(Level.WARNING, line + " -> Invalid command found, skipping it and proceeding futher.");
+					/*
+					 * throw new IllegalAccessException(
+					 * "The command specified is invalid. Your command must be one of PLACE,BLOCK,EXPLORE or REPORT"
+					 * );
+					 */
 				}
+			}
+
+			// Add default place command if not available already.
+			if (!isPlaceCmdAvailable) {
+				LOG.log(Level.WARNING, "place command not found, adding default COMMAND 'PLACE 0,0'");
+				commands.add(0, new InputCommands("PLACE", 0, 0));
 			}
 		}
 		return commands;
@@ -225,4 +234,5 @@ public class MainSimulator {
 	public Queue<InputCommands> getQueue(InputManager inputManager) {
 		return inputManager.getQueue();
 	}
+
 }
